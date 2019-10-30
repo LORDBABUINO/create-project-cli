@@ -1,0 +1,34 @@
+{
+  "name": "<%= props.name %>",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "sucrase-node src/server.js",
+    "dev": "nodemon src/server.js",
+  },
+  "dependencies": {
+    "@sentry/node": "*",
+    "date-fns": "*",
+    "dotenv": "*",
+    "express": "*",
+    "express-async-errors": "*",
+    "jsonwebtoken": "*",
+    "pg": "*",
+    "pg-hstore": "*",
+    "sequelize": "*",
+    "youch": "*",
+    "yup": "*"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "eslint-config-airbnb-base": "*",
+    "eslint-config-prettier": "*",
+    "eslint-plugin-import": "*",
+    "eslint-plugin-prettier": "*",
+    "nodemon": "*",
+    "prettier": "*",
+    "sequelize-cli": "*",
+    "sucrase": "*"
+  }
+}
