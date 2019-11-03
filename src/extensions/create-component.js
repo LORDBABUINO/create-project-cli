@@ -1,10 +1,15 @@
-module.exports = (toolbox) => {
+module.exports = toolbox => {
   const {
-    filesystem, template, print: { success, error },
+    filesystem,
+    template,
+    print: { success, error }
   } = toolbox
 
   async function isReactNative(root) {
-    const packageJson = await filesystem.read(`${root || ''}/package.json`, 'json')
+    const packageJson = await filesystem.read(
+      `${root || '.'}/package.json`,
+      'json'
+    )
     return !!packageJson.dependencies['react-native']
   }
   async function createComponent(folder, name, root) {
@@ -12,17 +17,19 @@ module.exports = (toolbox) => {
       error('Component name must be specified')
       return
     }
-    const styleTemplate = (await isReactNative(root)) ? 'styles-rn.js.ejs' : 'styles-react.js.ejs'
+    const styleTemplate = (await isReactNative(root))
+      ? 'styles-rn.js.ejs'
+      : 'styles-react.js.ejs'
     await Promise.all([
       template.generate({
         template: 'component.js.ejs',
         target: `${folder}/${name}/index.js`,
-        props: { name },
+        props: { name }
       }),
       template.generate({
         template: styleTemplate,
-        target: `${folder}/${name}/styles.js`,
-      }),
+        target: `${folder}/${name}/styles.js`
+      })
     ])
     success(`Generated ${folder}/${name}.`)
   }
