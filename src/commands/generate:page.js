@@ -1,18 +1,8 @@
-module.exports = {
+export default {
   name: 'generate:page',
   description: 'Create new component inside src/pages',
-  run: async toolbox => {
-    const {
-      parameters,
-      createComponent,
-      system: { run }
-    } = toolbox
-
+  run: async ({ parameters, generate }) => {
     const name = parameters.first
-
-    createComponent('src/pages', name)
-    run(
-      `sed -i 's/\nconst Routes/import ${name} from \\'/pages/${name}\\'/g' INPUTFILE`
-    )
+    generate.page(name)
   }
 }

@@ -23,7 +23,8 @@
   "license": "MIT",
   "dependencies": {
     "gluegun": "^4.0.3",
-    "inquirer": "^7.0.0"
+    "inquirer": "^7.0.0",
+    "sucrase": "^3.10.1"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
@@ -34,7 +35,7 @@
     "eslint-plugin-react": "^7.16.0",
     "jest": "^24.1.0",
     "prettier": "^1.18.2",
-    "standard": "^12.0.1"
+    "standard": "^14.3.1"
   },
   "jest": {
     "testEnvironment": "node"

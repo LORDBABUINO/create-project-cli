@@ -1,4 +1,5 @@
 #!/usr/bin/env node
 
+require('sucrase/register')
 // run the CLI with the current process arguments
 require('../src/cli').run(process.argv);

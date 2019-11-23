@@ -58,7 +58,7 @@ module.exports = {
         props: { name }
       }),
       template.generate({
-        template: 'react/editorconfig',
+        template: 'editorconfig',
         target: `${name}/.editorconfig`
       }),
       template.generate({
