@@ -83,11 +83,16 @@ export default {
         target: `${name}/src/config/Reactotron.js`
       }),
       template.generate({
+        template: 'react-native/prettierrc',
+        target: `${name}/.prettierrc`
+      }),
+      template.generate({
         template: 'react-native/eslintrc.js',
         target: `${name}/.eslintrc.js`
       }),
       installDependencies(),
       filesystem.removeAsync(`${name}/App.js`),
+      filesystem.removeAsync(`${name}/.prettierrc.js`),
       replace(`${name}/index.js`, './App', './src'),
       cli.run(`generate:page Home --dir ${name}`)
     ])
