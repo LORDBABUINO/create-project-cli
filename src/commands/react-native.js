@@ -79,16 +79,17 @@ export default {
         target: `${name}/.editorconfig`
       }),
       template.generate({
-        template: 'react-native/reactotron.js',
-        target: `${name}/src/config/Reactotron.js`
-      }),
-      template.generate({
         template: 'react-native/prettierrc',
         target: `${name}/.prettierrc`
       }),
       template.generate({
         template: 'react-native/eslintrc.js',
         target: `${name}/.eslintrc.js`
+      }),
+      template.generate({
+        template: 'reactotron.js.ejs',
+        target: `${name}/src/config/Reactotron.js`,
+        props: { reactNative: true }
       }),
       installDependencies(),
       filesystem.removeAsync(`${name}/App.js`),

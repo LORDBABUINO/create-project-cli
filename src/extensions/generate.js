@@ -40,10 +40,10 @@ export default toolbox => {
     success(`Generated ${folder}/${name}.`)
   }
 
-  async function page(name) {
+  async function page(name, root) {
     const pathRoutes = `${options.dir || '.'}/src/routes.js`
 
-    component(`${options.dir || '.'}/src/pages`, name)
+    component(`${options.dir || '.'}/src/pages`, name, root)
 
     await patch(pathRoutes, {
       insert: `import ${name} from './pages/${name}'\n`,
@@ -51,7 +51,7 @@ export default toolbox => {
     })
     patch(
       pathRoutes,
-      isReactNative()
+      isReactNative(root)
         ? {
             insert: `\n      ${name},`,
             after: 'Navigator(\n    {'
@@ -62,5 +62,5 @@ export default toolbox => {
           }
     )
   }
-  toolbox.generate = { component, page }
+  toolbox.generate = { component, page, isReactNative }
 }

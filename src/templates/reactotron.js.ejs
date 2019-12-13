@@ -1,0 +1,12 @@
+import Reactotron from 'reactotron-react-'
+
+if (__DEV__) {
+  const tron = Reactotron.configure()
+    <% if(props.reactNative) {%>
+      .useReactNative()
+    <%}%>
+    .connect()
+  console.tron = tron
+
+  tron.clear()
+}

@@ -7,7 +7,7 @@ module.exports = {
     const {
       parameters,
       template,
-      createComponent,
+      generate: { page },
       system: { run },
       print: { info, success }
     } = toolbox
@@ -74,7 +74,7 @@ module.exports = {
         target: `${name}/.gitignore`
       }),
       installDependencies(),
-      createComponent(`${name}/src/pages`, 'Home', name)
+      page('Home', name)
     ])
 
     info('Making first commit')

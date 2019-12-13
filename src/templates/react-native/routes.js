@@ -3,8 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 
 const Routes = createAppContainer(
   createStackNavigator(
-    {
-    },
+    {},
     {
       headerLayoutPreset: 'center',
       headerBackTitleVisible: false,

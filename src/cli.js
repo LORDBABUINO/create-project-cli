@@ -3,7 +3,7 @@ import { build } from 'gluegun'
 export async function run(argv) {
   // create a CLI runtime
   const cli = build()
-    .exclude(['meta', 'strings', 'semver', 'prompt', 'http'])
+    .exclude(['meta', 'strings', 'prompt', 'http'])
     .brand('omni')
     .src(__dirname)
     .plugins('./node_modules', { matching: 'omni-*', hidden: true })
