@@ -23,6 +23,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'no-param-reassign': ['error', {'props': false}],
-    semi: ['error', 'never']
+    semi: ['error', 'never'],
+    'no-underscore-dangle': "off"
   },
 };

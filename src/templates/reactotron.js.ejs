@@ -1,4 +1,9 @@
-import Reactotron from 'reactotron-react-'
+import Reactotron from 'reactotron-react-<%
+if(props.reactNative) {
+  %>native<%
+} else {
+  %>js<%
+}%>'
 
 if (__DEV__) {
   const tron = Reactotron.configure()
