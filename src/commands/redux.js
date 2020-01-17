@@ -1,4 +1,3 @@
-import inquirer from 'inquirer'
 // import util from 'util'
 import r from 'ramda'
 
@@ -11,27 +10,10 @@ module.exports = {
     template,
     patch,
     system: { run },
-    generate: { isReactNative }
+    generate: { isReactNative },
+    utils: { camelcase, getModuleDetails }
   }) => {
     const getFolder = r.propOr('.', 'dir')
-    const askName = async name =>
-      r.prop(
-        'name',
-        await inquirer.prompt([
-          {
-            type: 'input',
-            name: 'name',
-            message: `What is the ${name}'s name you wanna build?`
-          }
-        ])
-      )
-    const getModuleDetails = questionValue =>
-      r.pipe(r.values, r.head)(questionValue) ||
-      r.pipe(r.keys, r.head, askName)(questionValue)
-    const camelcase = r.converge(r.concat, [
-      r.pipe(r.head, r.toUpper),
-      r.slice(1, Infinity)
-    ])
     const buildReplacer = matcher => stringReplacer =>
       r.ifElse(
         r.test(new RegExp(`(^|\\s|/)${matcher}`, 'gi')),
