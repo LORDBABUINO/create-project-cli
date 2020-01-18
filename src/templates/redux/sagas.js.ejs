@@ -1,0 +1,10 @@
+import { put, all, takeEvery } from 'redux-saga/effects'
+import { <%=props.functionName%>Success } from './actions'
+
+function* <%=props.functionName%>() {
+  yield put(<%=props.functionName%>Success())
+}
+
+export default all([
+  takeEvery('<%=props.type%>', <%=props.functionName%>),
+])
