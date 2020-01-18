@@ -1,13 +1,14 @@
 module.exports = {
   env: {
-    commonjs: true,
     es6: true,
     node: true,
+    'jest/globals': true,
   },
   extends: [
     'airbnb-base',
     'prettier',
     'prettier/react',
+    'plugin:jest/recommended',
   ],
   globals: {
     Atomics: 'readonly',
@@ -19,6 +20,7 @@ module.exports = {
   plugins: [
     'react',
     'prettier',
+    'jest',
   ],
   rules: {
     'prettier/prettier': 'error',
