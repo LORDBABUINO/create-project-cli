@@ -1,25 +1,26 @@
 import r from 'ramda'
-import inquirer from 'inquirer'
+import { prompt } from 'inquirer'
 
 export default toolbox => {
   const camelcase = r.converge(r.concat, [
     r.pipe(r.head, r.toUpper),
     r.slice(1, Infinity)
   ])
-  const askName = async name =>
-    r.prop(
-      'name',
-      await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'name',
-          message: `What is the ${name}'s name you wanna build?`
-        }
-      ])
-    )
-  const getModuleDetails = questionValue =>
-    r.pipe(r.values, r.head)(questionValue) ||
-    r.pipe(r.keys, r.head, askName)(questionValue)
+  const makeQuestion = name => ({
+    type: 'input',
+    name,
+    message: `What is the ${name}'s name you wanna build?`
+  })
+
+  const makeQuestions = r.pipe(
+    r.reject(r.is(String)),
+    r.keys,
+    r.map(makeQuestion),
+    prompt
+  )
+
+  const getModuleDetails = obj => r.then(r.mergeRight(obj), makeQuestions(obj))
+  // const getModuleDetails = r.converge(r.then, [r.mergeRight, makeQuestions])
 
   toolbox.utils = { camelcase, getModuleDetails }
 }

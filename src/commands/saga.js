@@ -17,7 +17,7 @@ module.exports = {
         })
       })
     const writeFiles = config => template.generate(config)
-    const buildMainFunction = (reducer, action) => {
+    const buildMainFunction = ({ reducer, action }) => {
       const type = `@${reducer}/${action.toUpperCase()}`
       const functionName = `${action}To${camelcase(reducer)}`
       return r.map(
@@ -25,8 +25,7 @@ module.exports = {
       )
     }
     buildMainFunction(
-      await getModuleDetails({ reducer: first }),
-      await getModuleDetails({ action: second })
+      await getModuleDetails({ reducer: first, action: second })
     )([
       {
         template: 'redux/sagas.js.ejs',

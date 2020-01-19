@@ -101,7 +101,7 @@ module.exports = {
     const gitCommit = (folder, commit) => () =>
       r.pipe(mergeGitCommands(folder), run)(['add .', `commit -m ${commit}`])
 
-    const buildMainFunction = (folder, reducer, action) => {
+    const buildMainFunction = (folder, { reducer, action }) => {
       const type = `@${reducer}/${action.toUpperCase()}`
       const hasRedux = exists(folder)('src/store')
       return r.pipe(
@@ -123,8 +123,7 @@ module.exports = {
 
     buildMainFunction(
       getFolder(options),
-      await getModuleDetails({ reducer: first }),
-      await getModuleDetails({ action: second })
+      await getModuleDetails({ reducer: first, action: second })
     )([
       {
         template: 'reactotron.js.ejs',
