@@ -13,6 +13,7 @@ module.exports = {
         target: r.replace('reducerName', reducer),
         props: r.evolve({
           type: () => type,
+          reducer: () => reducer,
           functionName: () => functionName
         })
       })
@@ -31,6 +32,11 @@ module.exports = {
         template: 'redux/sagas.js.ejs',
         target: 'src/store/modules/reducerName/sagas.js',
         props: { type: '', functionName: '' }
+      },
+      {
+        template: 'redux/rootSaga.js.ejs',
+        target: 'src/store/modules/rootSaga.js',
+        props: { reducer: '' }
       }
     ])
   }
