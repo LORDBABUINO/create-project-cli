@@ -8,18 +8,22 @@ describe('saga command', () => {
   const cli = async cmd =>
     system.run(`node ${filesystem.path(src, 'bin', 'omni')} ${cmd}`)
 
-  it("should generate 'sagas.js' file", async () => {
+  beforeEach(async () => {
     await cli('saga batata nervosa')
+  })
+
+  afterEach(() => {
+    if (filesystem.exists('src/store')) filesystem.remove('src/store')
+  })
+
+  it("should generate 'sagas.js' file", async () => {
     const file = filesystem.read(`src/store/modules/${reducer}/sagas.js`)
     expect(file).toContain(type)
     expect(file).toContain(functionName)
-    filesystem.remove('src/store')
   })
 
   it("should generate 'rootSaga.js' file", async () => {
-    await cli('saga batata nervosa')
     const file = filesystem.read('src/store/modules/rootSaga.js')
     expect(file).toContain(reducer)
-    filesystem.remove('src/store')
   })
 })
