@@ -3,6 +3,7 @@ import { prompt } from 'inquirer'
 
 export default toolbox => {
   const camelcase = r.replace(/(^\w|-\w)/g, r.pipe(r.last, r.toUpper))
+  const snakecase = r.pipe(r.replace('-', '_'), r.toUpper)
   const makeQuestion = name => ({
     type: 'input',
     name,
@@ -19,5 +20,5 @@ export default toolbox => {
   const getModuleDetails = obj => r.then(r.mergeRight(obj), makeQuestions(obj))
   // const getModuleDetails = r.converge(r.then, [r.mergeRight, makeQuestions])
 
-  toolbox.utils = { camelcase, getModuleDetails }
+  toolbox.utils = { camelcase, snakecase, getModuleDetails }
 }

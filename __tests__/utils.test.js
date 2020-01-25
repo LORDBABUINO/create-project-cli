@@ -31,6 +31,10 @@ describe('utils', () => {
     expect(toolbox.utils.camelcase('nervosa-success')).toBe('NervosaSuccess')
   })
 
+  it("should return 'BATATA_NERVOSA' when call \"snakecase('batata-nervosa')\"", () => {
+    expect(toolbox.utils.snakecase('batata-nervosa')).toBe('BATATA_NERVOSA')
+  })
+
   it("should return {1: 'batata'} when call \"getModuleDetails({1: 'batata'})\"", () => {
     return expect(
       toolbox.utils.getModuleDetails({ 1: 'batata' })
