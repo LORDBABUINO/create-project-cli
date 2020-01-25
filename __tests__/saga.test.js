@@ -1,29 +1,46 @@
-import { system, filesystem } from 'gluegun'
+import { run as saga } from '../src/commands/saga'
+import * as cli from '../src/cli'
 
 describe('saga command', () => {
   const type = '@batata/NERVOSA'
   const reducer = 'batata'
+  const action = 'nervosa'
   const functionName = 'nervosaToBatata'
-  const src = filesystem.path(__dirname, '..')
-  const cli = async cmd =>
-    system.run(`node ${filesystem.path(src, 'bin', 'omni')} ${cmd}`)
+  const mockTemplate = jest.fn()
+  cli.run = jest.fn()
 
-  beforeEach(async () => {
-    await cli('saga batata nervosa')
-  })
+  beforeEach(() =>
+    saga({
+      template: { generate: mockTemplate },
+      parameters: { first: reducer, second: action },
+      utils: {
+        camelcase: () => 'Batata',
+        getModuleDetails: () => ({ reducer, action })
+      }
+    })
+  )
 
   afterEach(() => {
-    if (filesystem.exists('src/store')) filesystem.remove('src/store')
+    mockTemplate.mockClear()
   })
 
-  it("should generate 'sagas.js' file", async () => {
-    const file = filesystem.read(`src/store/modules/${reducer}/sagas.js`)
-    expect(file).toContain(type)
-    expect(file).toContain(functionName)
+  it("should generate 'sagas.js' file", () => {
+    expect(mockTemplate).toHaveBeenCalledWith({
+      template: 'redux/sagas.js.ejs',
+      target: `src/store/modules/${reducer}/sagas.js`,
+      props: { type, functionName }
+    })
   })
 
-  it("should generate 'rootSaga.js' file", async () => {
-    const file = filesystem.read('src/store/modules/rootSaga.js')
-    expect(file).toContain(reducer)
+  it("should generate 'rootSagas.js' file", () => {
+    expect(mockTemplate).toHaveBeenCalledWith({
+      template: 'redux/rootSaga.js.ejs',
+      target: 'src/store/modules/rootSaga.js',
+      props: { reducer }
+    })
+  })
+
+  it('should configurate redux', () => {
+    expect(cli.run).toHaveBeenCalledWith(`redux ${reducer} ${action}-success`)
   })
 })

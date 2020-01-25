@@ -1,4 +1,5 @@
 import r from 'ramda'
+import { run as cli } from '../cli'
 
 module.exports = {
   name: 'saga',
@@ -17,15 +18,20 @@ module.exports = {
           functionName: () => functionName
         })
       })
-    const writeFiles = config => template.generate(config)
+
+    const writeFile = r.cond([
+      [r.has('template'), template.generate],
+      [r.has('command'), ({ command }) => cli(command)]
+    ])
+
     const buildMainFunction = ({ reducer, action }) => {
       const type = `@${reducer}/${action.toUpperCase()}`
       const functionName = `${action}To${camelcase(reducer)}`
       return r.map(
-        r.pipe(updateStrings(reducer, type, functionName), writeFiles)
+        r.pipe(updateStrings(reducer, type, functionName), writeFile)
       )
     }
-    buildMainFunction(
+    return buildMainFunction(
       await getModuleDetails({ reducer: first, action: second })
     )([
       {
@@ -37,6 +43,9 @@ module.exports = {
         template: 'redux/rootSaga.js.ejs',
         target: 'src/store/modules/rootSaga.js',
         props: { reducer: '' }
+      },
+      {
+        command: 'redux batata nervosa-success'
       }
     ])
   }
