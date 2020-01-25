@@ -4,6 +4,7 @@ import { prompt } from 'inquirer'
 import utils from '../src/extensions/utils'
 
 describe('utils', () => {
+  const toolbox = {}
   beforeAll(async () => {
     prompt.mockImplementation(async obj =>
       Object.keys(obj).length < 2
@@ -15,21 +16,22 @@ describe('utils', () => {
             action: 'nervosa'
           }
     )
+    utils(toolbox)
   })
 
   afterEach(() => {
     prompt.mockClear()
   })
 
-  it("should return 'Batata' when call 'camelcase('batata')'", () => {
-    const toolbox = {}
-    utils(toolbox)
+  it("should return 'Batata' when call \"camelcase('batata')\"", () => {
     expect(toolbox.utils.camelcase('batata')).toBe('Batata')
   })
 
-  it("should return {1: 'batata'} when call 'getModuleDetails({1: 'batata'})'", () => {
-    const toolbox = {}
-    utils(toolbox)
+  it("should return 'nervosaSuccess' when call \"camelcase('nervosa-success')\"", () => {
+    expect(toolbox.utils.camelcase('nervosa-success')).toBe('NervosaSuccess')
+  })
+
+  it("should return {1: 'batata'} when call \"getModuleDetails({1: 'batata'})\"", () => {
     return expect(
       toolbox.utils.getModuleDetails({ 1: 'batata' })
     ).resolves.toMatchObject({
@@ -38,8 +40,6 @@ describe('utils', () => {
   })
 
   it("should call inquirer when call 'getModuleDetails({reducer: false})'", async () => {
-    const toolbox = {}
-    utils(toolbox)
     await expect(
       toolbox.utils.getModuleDetails({ reducer: false })
     ).resolves.toMatchObject({
@@ -48,9 +48,7 @@ describe('utils', () => {
     expect(prompt).toHaveBeenCalled()
   })
 
-  it('should be able to receive multiple options', async () => {
-    const toolbox = {}
-    utils(toolbox)
+  it('should be able to receive multiple options getModuleDetails function', async () => {
     await expect(
       toolbox.utils.getModuleDetails({
         reducer: false,

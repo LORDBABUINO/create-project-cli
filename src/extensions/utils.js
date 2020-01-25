@@ -2,10 +2,10 @@ import r from 'ramda'
 import { prompt } from 'inquirer'
 
 export default toolbox => {
-  const camelcase = r.converge(r.concat, [
-    r.pipe(r.head, r.toUpper),
-    r.slice(1, Infinity)
-  ])
+  const camelcase = r.pipe(
+    r.replace(/(^\w|-\w)/g, r.toUpper),
+    r.replace('-', '')
+  )
   const makeQuestion = name => ({
     type: 'input',
     name,
