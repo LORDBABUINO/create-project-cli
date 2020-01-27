@@ -11,7 +11,7 @@ module.exports = {
     patch,
     system: { run },
     generate: { isReactNative },
-    utils: { camelcase, getModuleDetails }
+    utils: { camelcase, snakecase, pascalcase, getModuleDetails }
   }) => {
     const getFolder = r.propOr('.', 'dir')
     const buildReplacer = matcher => stringReplacer =>
@@ -20,7 +20,7 @@ module.exports = {
         r.replace(new RegExp(matcher, 'gi'), stringReplacer),
         r.replace(new RegExp(matcher, 'gi'), camelcase(stringReplacer))
       )
-    const prependFolderOnFilename = r.pipe(r.concat(r.__, `/`), r.concat)
+    // const prependFolderOnFilename = r.pipe(r.concat(r.__, `/`), r.concat)
     const replaceReactNativeIndex = r.pipe(
       r.always,
       r.when(r.__, r.replace(/src\/index/, 'src/App'))
@@ -43,7 +43,6 @@ module.exports = {
     const updateData = (folder, reactNative, reducer, action, type) =>
       r.evolve({
         target: r.pipe(
-          prependFolderOnFilename(folder),
           buildReplacer('reducerName')(reducer),
           replaceReactNativeIndex(reactNative)
         ),
@@ -62,7 +61,13 @@ module.exports = {
         props: r.evolve({
           action: r.always(action),
           reducer: r.always(reducer),
-          type: r.always(type)
+          type: r.always(type),
+          functionName: () =>
+            r.replace(
+              /-\w/,
+              w => `To${pascalcase(reducer)}${r.toUpper(w[1])}`,
+              action
+            )
         }),
         install: r.reduce((a, b) => `${a} ${b}`, `yarn --cwd ${folder} add`)
       })
@@ -102,7 +107,7 @@ module.exports = {
       r.pipe(mergeGitCommands(folder), run)(['add .', `commit -m ${commit}`])
 
     const buildMainFunction = (folder, { reducer, action }) => {
-      const type = `@${reducer}/${action.toUpperCase()}`
+      const type = `@${reducer}/${snakecase(action)}`
       const hasRedux = exists(folder)('src/store')
       return r.pipe(
         removeUneededTemplates(folder),
@@ -115,8 +120,8 @@ module.exports = {
             writeFiles
           )
         ),
-        opts => Promise.all(opts)
-        // r.then(gitCommit(folder, commitMessage(hasRedux)(type)))
+        opts => Promise.all(opts),
+        r.then(gitCommit(folder, commitMessage(hasRedux)(type)))
         // a => console.log(util.inspect(a, { depth: null }))
       )
     }
@@ -168,7 +173,7 @@ module.exports = {
           }
         ],
         template: 'redux/action.js.ejs',
-        props: { action: '', reducer: '', type: '' },
+        props: { functionName: '', type: '' },
         target: 'src/store/modules/reducerName/actions.js'
       },
       {
