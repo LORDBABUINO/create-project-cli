@@ -21,10 +21,10 @@ module.exports = {
   // collectCoverage: false,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ['src'],
+  collectCoverageFrom: ['src/**/*.js'],
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: '__test__/coverage',
+  coverageDirectory: '__tests__/coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
   // coveragePathIgnorePatterns: [
@@ -77,7 +77,7 @@ module.exports = {
   // moduleNameMapper: {},
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  modulePathIgnorePatterns: ['./src/store/'],
+  // modulePathIgnorePatterns: ['./src/store/'],
 
   // Activates notifications for test results
   // notify: false,
