@@ -18,7 +18,8 @@ export default toolbox => {
     prompt
   )
 
-  const getModuleDetails = obj => r.then(r.mergeRight(obj), makeQuestions(obj))
+  const getModuleDetails = obj =>
+    r.andThen(r.mergeRight(obj), makeQuestions(obj))
   // const getModuleDetails = r.converge(r.then, [r.mergeRight, makeQuestions])
 
   toolbox.utils = { camelcase, pascalcase, snakecase, getModuleDetails }

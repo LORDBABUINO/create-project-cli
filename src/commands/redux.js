@@ -121,7 +121,7 @@ module.exports = {
           )
         ),
         opts => Promise.all(opts),
-        r.then(gitCommit(folder, commitMessage(hasRedux)(type)))
+        r.andThen(gitCommit(folder, commitMessage(hasRedux)(type)))
         // a => console.log(util.inspect(a, { depth: null }))
       )
     }
