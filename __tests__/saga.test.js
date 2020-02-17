@@ -7,6 +7,7 @@ describe('saga command', () => {
   const action = 'nervosa'
   const functionName = 'nervosaToBatata'
   const mockTemplate = jest.fn()
+  const mockPatch = jest.fn()
   cli.run = jest.fn()
 
   beforeEach(() =>
@@ -16,7 +17,8 @@ describe('saga command', () => {
       utils: {
         camelcase: () => 'Batata',
         getModuleDetails: () => ({ reducer, action })
-      }
+      },
+      patch: mockPatch
     })
   )
 
@@ -38,6 +40,16 @@ describe('saga command', () => {
       target: 'src/store/modules/rootSaga.js',
       props: { reducer }
     })
+  })
+
+  it("should add 'request' action", () => {
+    expect(mockPatch).toHaveBeenCalledWith(
+      `src/store/modules/${reducer}/actions.js`,
+      {
+        insert: `\n\nexport const ${functionName}Request = () => ({type: ${type}_REQUEST})`,
+        before: /$(?![\r\n])/gm // EOF
+      }
+    )
   })
 
   it('should configurate redux', () => {
