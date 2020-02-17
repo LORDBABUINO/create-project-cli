@@ -9,6 +9,8 @@
     "format": "prettier --write **/*.{js,json} && standard --fix",
     "lint": "standard",
     "test": "jest",
+    "unit": "jest -c jest.config.unit.js",
+    "integration": "jest - jest.config.integration.js",
     "watch": "jest --watch",
     "snapupdate": "jest --updateSnapshot",
     "coverage": "jest --coverage"
