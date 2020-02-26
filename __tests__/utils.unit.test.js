@@ -68,4 +68,10 @@ describe('utils', () => {
     })
     expect(prompt).toHaveBeenCalled()
   })
+
+  it('isReactNative should return false when there is no package.json', async () => {
+    const toolboxFileSystem = { filesystem: { read: () => undefined } }
+    utils(toolboxFileSystem)
+    expect(toolboxFileSystem.utils.isReactNative()).toBeFalsy()
+  })
 })

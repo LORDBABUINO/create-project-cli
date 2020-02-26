@@ -2,6 +2,7 @@ import r from 'ramda'
 import { prompt } from 'inquirer'
 
 export default toolbox => {
+  const { filesystem } = toolbox
   const camelcase = r.replace(/-\w/g, r.pipe(r.last, r.toUpper))
   const pascalcase = r.pipe(r.replace(/^\w/, r.toUpper), camelcase)
   const snakecase = r.pipe(r.replace('-', '_'), r.toUpper)
@@ -22,5 +23,16 @@ export default toolbox => {
     r.andThen(r.mergeRight(obj), makeQuestions(obj))
   // const getModuleDetails = r.converge(r.then, [r.mergeRight, makeQuestions])
 
-  toolbox.utils = { camelcase, pascalcase, snakecase, getModuleDetails }
+  const isReactNative = root => {
+    const packageJson = filesystem.read(`${root || '.'}/package.json`, 'json')
+    return packageJson && !!packageJson.dependencies['react-native']
+  }
+
+  toolbox.utils = {
+    camelcase,
+    pascalcase,
+    snakecase,
+    getModuleDetails,
+    isReactNative
+  }
 }

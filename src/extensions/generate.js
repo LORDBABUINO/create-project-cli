@@ -1,17 +1,12 @@
+import utilsGenerator from './utils'
+
 export default toolbox => {
+  utilsGenerator(toolbox)
   const {
     template,
-    filesystem: aFilesystem,
-    parameters: { options },
-    patch
+    patch,
+    utils: { isReactNative }
   } = toolbox
-
-  const filesystem = options.dir ? aFilesystem.dir(options.dir) : aFilesystem
-
-  const isReactNative = root =>
-    !!filesystem.read(`${root || '.'}/package.json`, 'json').dependencies[
-      'react-native'
-    ]
 
   const component = (folder, name, root) =>
     Promise.all([
@@ -51,5 +46,5 @@ export default toolbox => {
         insetNavigator(root || '.', name)
       )
     ])
-  toolbox.generate = { component, page, isReactNative }
+  toolbox.generate = { component, page }
 }
