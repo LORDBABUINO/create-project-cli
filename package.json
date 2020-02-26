@@ -10,7 +10,7 @@
     "lint": "standard",
     "test": "jest",
     "unit": "jest -c jest.config.unit.js",
-    "integration": "jest - jest.config.integration.js",
+    "integration": "jest -c jest.config.integration.js",
     "watch": "jest --watch",
     "snapupdate": "jest --updateSnapshot",
     "coverage": "jest --coverage"
@@ -24,7 +24,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "gluegun": "^4.0.3",
+    "gluegun": "^4.2.0",
     "inquirer": "^7.0.3",
     "ramda": "^0.27.0",
     "sucrase": "^3.12.1"
@@ -35,7 +35,7 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-import": "^2.20.0",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.8.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.0",
     "jest": "^25.1.0",
