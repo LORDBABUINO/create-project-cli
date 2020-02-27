@@ -10,7 +10,7 @@
     "lint": "standard",
     "test": "jest",
     "unit": "jest -c jest.config.unit.js",
-    "integration": "jest -c jest.config.integration.js",
+    "integration": "jest -c jest.config.integration.js -i",
     "watch": "jest --watch",
     "snapupdate": "jest --updateSnapshot",
     "coverage": "jest --coverage"
