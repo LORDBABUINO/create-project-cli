@@ -18,7 +18,7 @@ describe('saga command', () => {
         camelcase: () => 'Batata',
         getModuleDetails: () => ({ reducer, action })
       },
-      patch: mockPatch
+      patching: { patch: mockPatch }
     })
   )
 

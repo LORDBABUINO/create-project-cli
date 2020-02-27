@@ -8,10 +8,14 @@ module.exports = {
     template,
     parameters: { first, second },
     utils: { camelcase, getModuleDetails },
-    patch
+    patching: { patch }
   }) => {
-    const updateStrings = (reducer, type, functionName) =>
+    const updateStrings = (reducer, action, type, functionName) =>
       r.evolve({
+        command: r.pipe(
+          r.replace('reducerName', reducer),
+          r.replace('actionName', action)
+        ),
         target: r.replace('reducerName', reducer),
         props: r.evolve({
           type: () => type,
@@ -40,7 +44,7 @@ module.exports = {
       const type = `@${reducer}/${action.toUpperCase()}`
       const functionName = `${action}To${camelcase(reducer)}`
       return r.map(
-        r.pipe(updateStrings(reducer, type, functionName), writeFile)
+        r.pipe(updateStrings(reducer, action, type, functionName), writeFile)
       )
     }
     return buildMainFunction(
@@ -66,7 +70,7 @@ module.exports = {
         ]
       },
       {
-        command: 'redux batata nervosa-success'
+        command: 'redux reducerName actionName-success'
       }
     ])
   }
