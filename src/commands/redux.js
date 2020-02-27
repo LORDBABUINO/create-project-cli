@@ -10,8 +10,7 @@ module.exports = {
     template,
     patch,
     system: { run },
-    generate: { isReactNative },
-    utils: { camelcase, snakecase, pascalcase, getModuleDetails }
+    utils: { camelcase, snakecase, pascalcase, getModuleDetails, isReactNative }
   }) => {
     const getFolder = r.propOr('.', 'dir')
     const buildReplacer = matcher => stringReplacer =>
@@ -104,7 +103,10 @@ module.exports = {
         ''
       )
     const gitCommit = (folder, commit) => () =>
-      r.pipe(mergeGitCommands(folder), run)(['add .', `commit -m ${commit}`])
+      r.pipe(
+        mergeGitCommands(folder),
+        run
+      )(['init', 'add .', `commit -m '${commit}'`])
 
     const buildMainFunction = (folder, { reducer, action }) => {
       const type = `@${reducer}/${snakecase(action)}`

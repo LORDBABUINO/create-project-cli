@@ -13,13 +13,13 @@ describe('redux command', () => {
       parameters: { first: reducer, second: action },
       patch: jest.fn(),
       system: { run: jest.fn() },
-      generate: { isReactNative: jest.fn() },
       template: { generate: mockTemplate },
       utils: {
         camelcase: jest.fn(),
         getModuleDetails: () => ({ reducer, action }),
         snakecase: () => 'NERVOSA_SUCCESS',
-        pascalcase: () => 'Batata'
+        pascalcase: () => 'Batata',
+        isReactNative: jest.fn()
       }
     })
   )
