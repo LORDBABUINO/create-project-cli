@@ -1,4 +1,4 @@
-import { system, filesystem, patching } from 'gluegun'
+import { system, filesystem } from 'gluegun'
 
 describe('redux command integration', () => {
   const src = filesystem.path(__dirname, '..')
@@ -6,7 +6,7 @@ describe('redux command integration', () => {
   const projectPath = filesystem.path(src, project)
   const reducer = 'batata'
   const action = 'nervosa'
-  const functionName = 'nervosaToBatata'
+  const functionName = 'nervosaBatata'
   const type = '@batata/NERVOSA'
 
   const cli = async cmd =>
@@ -25,13 +25,14 @@ describe('redux command integration', () => {
     const file = filesystem.path(
       projectPath,
       'src',
+      'store',
       'modules',
       reducer,
       'actions.js'
     )
-    const content = `\n\nexport const ${functionName} = () => ({type: ${type}})`
-    const hasContent = patching.exists(file, content)
+    const expected = `export const ${functionName} = () => ({ type: '${type}' })`
+    const content = filesystem.read(file)
 
-    expect(hasContent).toBeTruthy()
+    expect(content).toMatch(expected)
   })
 })

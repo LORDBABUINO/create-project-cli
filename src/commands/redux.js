@@ -61,12 +61,7 @@ module.exports = {
           action: r.always(action),
           reducer: r.always(reducer),
           type: r.always(type),
-          functionName: () =>
-            r.replace(
-              /-\w/,
-              w => `To${pascalcase(reducer)}${r.toUpper(w[1])}`,
-              action
-            )
+          functionName: () => `${camelcase(action)}${pascalcase(reducer)}`
         }),
         install: r.reduce((a, b) => `${a} ${b}`, `yarn --cwd ${folder} add`)
       })

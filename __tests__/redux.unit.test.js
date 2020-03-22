@@ -1,10 +1,11 @@
+// import util from 'util'
 import { run as redux } from '../src/commands/redux'
 
 describe('redux command', () => {
   const type = '@batata/NERVOSA_SUCCESS'
   const reducer = 'batata'
   const action = 'nervosa-success'
-  const functionName = 'nervosaToBatataSuccess'
+  const functionName = 'nervosaSuccessBatata'
   const mockTemplate = jest.fn()
 
   beforeEach(() =>
@@ -15,7 +16,7 @@ describe('redux command', () => {
       system: { run: jest.fn() },
       template: { generate: mockTemplate },
       utils: {
-        camelcase: jest.fn(),
+        camelcase: () => 'nervosaSuccess',
         getModuleDetails: () => ({ reducer, action }),
         snakecase: () => 'NERVOSA_SUCCESS',
         pascalcase: () => 'Batata',
@@ -37,6 +38,9 @@ describe('redux command', () => {
   })
 
   it("should generate 'action.js' file", () => {
+    // console.log(
+    //   util.inspect({ mockTemplate: mockTemplate.mock.calls }, { depth: null })
+    // )
     expect(mockTemplate).toHaveBeenCalledWith({
       template: 'redux/action.js.ejs',
       props: { functionName, type },
