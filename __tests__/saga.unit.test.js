@@ -46,7 +46,7 @@ describe('saga command', () => {
     expect(mockPatch).toHaveBeenCalledWith(
       `src/store/modules/${reducer}/actions.js`,
       {
-        insert: `\n\nexport const ${functionName}Request = () => ({type: ${type}_REQUEST})`,
+        insert: `\nexport const ${functionName}Request = () => ({type: '${type}_REQUEST}')`,
         before: /$(?![\r\n])/gm // EOF
       }
     )
