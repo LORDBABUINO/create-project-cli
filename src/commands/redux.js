@@ -7,10 +7,15 @@ module.exports = {
   run: async ({
     filesystem: { dir },
     parameters: { first, second, options },
-    template,
-    patch,
     system: { run },
-    utils: { camelcase, snakecase, pascalcase, getModuleDetails, isReactNative }
+    utils: {
+      camelcase,
+      snakecase,
+      pascalcase,
+      getModuleDetails,
+      isReactNative
+    },
+    builder: { writeFiles }
   }) => {
     const getFolder = r.propOr('.', 'dir')
     const buildReplacer = matcher => stringReplacer =>
@@ -65,11 +70,6 @@ module.exports = {
         }),
         install: r.reduce((a, b) => `${a} ${b}`, `yarn --cwd ${folder} add`)
       })
-    const writeFiles = r.cond([
-      [r.has('template'), template.generate],
-      [r.has('install'), ({ install }) => run(install)],
-      [r.has('opts'), ({ target, opts }) => patch(target, ...opts)]
-    ])
     const removeUneededTemplates = r.pipe(
       exists,
       r.propSatisfies(r.__, 'target'),

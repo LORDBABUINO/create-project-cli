@@ -1,14 +1,12 @@
 import r from 'ramda'
-import { run as cli } from '../cli'
 
 module.exports = {
   name: 'saga',
   description: 'Adds saga to project',
   run: async ({
-    template,
     parameters: { first, second },
     utils: { camelcase, getModuleDetails },
-    patching: { patch }
+    builder: { writeFiles }
   }) => {
     const updateStrings = (reducer, action, type, functionName) =>
       r.evolve({
@@ -34,12 +32,6 @@ module.exports = {
         )
       })
 
-    const writeFile = r.cond([
-      [r.has('template'), template.generate],
-      [r.has('opts'), ({ opts, target }) => patch(target, ...opts)],
-      [r.has('command'), ({ command }) => cli(command)]
-    ])
-
     const buildMainFunction = ({ reducer, action }) => {
       const type = `@${reducer}/${action.toUpperCase()}`
       const functionName = `${action}To${camelcase(reducer)}`
@@ -49,7 +41,7 @@ module.exports = {
             r.map(
               r.pipe(
                 updateStrings(reducer, action, type, functionName),
-                writeFile
+                writeFiles
               )
             )(y)
           )
