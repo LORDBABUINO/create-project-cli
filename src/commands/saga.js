@@ -6,41 +6,17 @@ module.exports = {
   run: async ({
     parameters: { first, second },
     utils: { camelcase, getModuleDetails },
-    builder: { writeFiles }
+    builder: { writeFiles, updateStrings },
   }) => {
-    const updateStrings = (reducer, action, type, functionName) =>
-      r.evolve({
-        command: r.pipe(
-          r.replace('reducerName', reducer),
-          r.replace('actionName', action)
-        ),
-        target: r.replace('reducerName', reducer),
-        props: r.evolve({
-          type: () => type,
-          reducer: () => reducer,
-          functionName: () => functionName
-        }),
-        opts: r.pipe(
-          r.when(r.is(String)),
-          r.map,
-          r.map
-        )(
-          r.pipe(
-            r.replace('functionName', functionName),
-            r.replace('typeName', type)
-          )
-        )
-      })
-
     const buildMainFunction = ({ reducer, action }) => {
       const type = `@${reducer}/${action.toUpperCase()}`
       const functionName = `${action}To${camelcase(reducer)}`
       return r.pipe(
-        r.map(y => () =>
+        r.map((y) => () =>
           Promise.all(
             r.map(
               r.pipe(
-                updateStrings(reducer, action, type, functionName),
+                updateStrings(reducer, action, type, functionName, false),
                 writeFiles
               )
             )(y)
@@ -56,14 +32,14 @@ module.exports = {
         {
           template: 'redux/sagas.js.ejs',
           target: 'src/store/modules/reducerName/sagas.js',
-          props: { type: '', functionName: '' }
+          props: { type: '', functionName: '' },
         },
         {
           template: 'redux/rootSaga.js.ejs',
           target: 'src/store/modules/rootSaga.js',
-          props: { reducer: '' }
+          props: { reducer: '' },
         },
-        { command: 'redux reducerName actionName-success' }
+        { command: 'redux reducerName actionName-success' },
       ],
       [
         {
@@ -71,11 +47,11 @@ module.exports = {
           opts: [
             {
               insert: `\nexport const functionNameRequest = () => ({type: 'typeName_REQUEST}')`,
-              before: /$(?![\r\n])/gm // EOF
-            }
-          ]
-        }
-      ]
+              before: /$(?![\r\n])/gm, // EOF
+            },
+          ],
+        },
+      ],
     ])
-  }
+  },
 }
