@@ -9,14 +9,14 @@ describe('saga command integration', () => {
   const functionName = 'nervosaToBatata'
   const type = '@batata/NERVOSA'
 
-  const cli = async cmd =>
+  const cli = async (cmd) =>
     system.run(`node ${filesystem.path(src, 'bin', 'omni')} ${cmd}`, {
-      cwd: projectPath
+      cwd: projectPath,
     })
 
   beforeEach(async () => {
     if (!filesystem.exists(projectPath)) await system.run(`mkdir ${project}`)
-    return cli(`saga ${reducer} ${action}`)
+    return cli(`saga ${reducer} ${action} --dir ${projectPath}`)
   })
 
   afterEach(async () => system.run(`rm -rf ${project}`))
@@ -33,5 +33,21 @@ describe('saga command integration', () => {
     const hasContent = patching.exists(file, content)
 
     expect(hasContent).toBeTruthy()
+  })
+
+  it('should install redux-saga', () => {
+    const dir = filesystem.path(projectPath, 'node_modules', 'redux-saga')
+
+    expect(filesystem.exists(dir)).toBeTruthy()
+  })
+
+  it('should install reactotron-redux-saga', () => {
+    const dir = filesystem.path(
+      projectPath,
+      'node_modules',
+      'reactotron-redux-saga'
+    )
+
+    expect(filesystem.exists(dir)).toBeTruthy()
   })
 })

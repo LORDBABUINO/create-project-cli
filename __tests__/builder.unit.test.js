@@ -11,6 +11,7 @@ describe('builder extension', () => {
     template: { generate: mockTemplate },
     patching: { patch: mockPatch },
     system: { run: mockRun },
+    parameters: { options: { dir: '.' } },
   }
 
   beforeAll(() => {
@@ -24,15 +25,22 @@ describe('builder extension', () => {
   it('writeFiles should run template.generate when receive { template }', () => {
     const template = {
       template: 'template',
+      target: 'target',
+      props: 'props',
     }
     toolbox.builder.writeFiles(template)
-    expect(mockTemplate).toHaveBeenCalledWith(template)
+    expect(mockTemplate).toHaveBeenCalledWith({
+      ...template,
+      target: `./${template.target}`,
+    })
   })
 
   it('writeFiles should run "run" when receive { install }', () => {
-    const install = { install: 'install' }
+    const install = { install: ['angular', 'vue', 'react'] }
     toolbox.builder.writeFiles(install)
-    expect(mockRun).toHaveBeenCalledWith(install.install)
+    expect(mockRun).toHaveBeenCalledWith(
+      'yarn init -y --cwd . && yarn --cwd . add angular vue react'
+    )
   })
 
   it('writeFiles should run patch when receive { opts }', () => {

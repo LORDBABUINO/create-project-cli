@@ -24,10 +24,6 @@ module.exports = {
     const type = `@${reducer}/${snakecase(action)}`
     const functionName = `${camelcase(action)}${pascalcase(reducer)}`
     const folder = options.dir || '.'
-    const makeInstallCommand = r.reduce(
-      (a, b) => `${a} ${b}`,
-      `yarn --cwd ${folder} add`
-    )
     const reactNative = isReactNative(folder)
     const removeReactotronConfigs = r.when(
       r.propSatisfies(r.test(/src\/App/), 'target'),
@@ -155,13 +151,13 @@ module.exports = {
         target: reactNative ? 'src/App.js' : 'src/index.js',
       },
       {
-        install: makeInstallCommand([
+        install: [
           'redux',
           'react-redux',
           'reactotron-react-js',
           'reactotron-redux',
           'immer',
-        ]),
+        ],
       },
     ])
   },

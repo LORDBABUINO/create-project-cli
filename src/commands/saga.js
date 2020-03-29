@@ -4,7 +4,7 @@ module.exports = {
   name: 'saga',
   description: 'Adds saga to project',
   run: async ({
-    parameters: { first, second },
+    parameters: { first, second, options },
     utils: { camelcase, pascalcase, getModuleDetails },
     builder: { writeFiles },
   }) => {
@@ -30,7 +30,11 @@ module.exports = {
           target: 'src/store/modules/rootSaga.js',
           props: { reducer },
         },
-        { command: `redux ${reducer} ${action}-success` },
+        {
+          command: `redux ${reducer} ${action}-success --dir ${
+            options.dir || '.'
+          }`,
+        },
       ],
       [
         {
@@ -42,6 +46,7 @@ module.exports = {
             },
           ],
         },
+        { install: ['redux-saga', 'reactotron-redux-saga'] },
       ],
     ])
   },
