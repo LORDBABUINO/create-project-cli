@@ -5,48 +5,39 @@ module.exports = {
   description: 'Adds saga to project',
   run: async ({
     parameters: { first, second },
-    utils: { camelcase, getModuleDetails },
-    builder: { writeFiles, updateStrings },
+    utils: { camelcase, pascalcase, getModuleDetails },
+    builder: { writeFiles },
   }) => {
-    const buildMainFunction = ({ reducer, action }) => {
-      const type = `@${reducer}/${action.toUpperCase()}`
-      const functionName = `${action}To${camelcase(reducer)}`
-      return r.pipe(
-        r.map((y) => () =>
-          Promise.all(
-            r.map(
-              r.pipe(
-                updateStrings(reducer, action, type, functionName, false),
-                writeFiles
-              )
-            )(y)
-          )
-        ),
-        r.reduce((a, b) => a.then(b), Promise.resolve())
-      )
-    }
-    return buildMainFunction(
-      await getModuleDetails({ reducer: first, action: second })
-    )([
+    const { reducer, action } = await getModuleDetails({
+      reducer: first,
+      action: second,
+    })
+    const type = `@${reducer}/${action.toUpperCase()}`
+    const functionName = `${camelcase(action)}${pascalcase(reducer)}`
+    const buildMainFunction = r.pipe(
+      r.map((y) => () => Promise.all(r.map(writeFiles)(y))),
+      r.reduce((a, b) => a.then(b), Promise.resolve())
+    )
+    return buildMainFunction([
       [
         {
           template: 'redux/sagas.js.ejs',
-          target: 'src/store/modules/reducerName/sagas.js',
-          props: { type: '', functionName: '' },
+          target: `src/store/modules/${reducer}/sagas.js`,
+          props: { type, functionName },
         },
         {
           template: 'redux/rootSaga.js.ejs',
           target: 'src/store/modules/rootSaga.js',
-          props: { reducer: '' },
+          props: { reducer },
         },
-        { command: 'redux reducerName actionName-success' },
+        { command: `redux ${reducer} ${action}-success` },
       ],
       [
         {
-          target: 'src/store/modules/reducerName/actions.js',
+          target: `src/store/modules/${reducer}/actions.js`,
           opts: [
             {
-              insert: `\nexport const functionNameRequest = () => ({type: 'typeName_REQUEST}')`,
+              insert: `\nexport const ${functionName}Request = () => ({type: '${type}_REQUEST}')`,
               before: /$(?![\r\n])/gm, // EOF
             },
           ],

@@ -15,16 +15,27 @@ module.exports = {
       getModuleDetails,
       isReactNative,
     },
-    builder: { writeFiles, updateStrings },
+    builder: { writeFiles },
   }) => {
-    const getFolder = r.propOr('.', 'dir')
+    const { reducer, action } = await getModuleDetails({
+      reducer: first,
+      action: second,
+    })
+    const type = `@${reducer}/${snakecase(action)}`
+    const functionName = `${camelcase(action)}${pascalcase(reducer)}`
+    const folder = options.dir || '.'
+    const makeInstallCommand = r.reduce(
+      (a, b) => `${a} ${b}`,
+      `yarn --cwd ${folder} add`
+    )
+    const reactNative = isReactNative(folder)
     const removeReactotronConfigs = r.when(
       r.propSatisfies(r.test(/src\/App/), 'target'),
       r.evolve({
         opts: r.reject(r.propEq('insert', "import './config/Reactotron'\n")),
       })
     )
-    const exists = (folder) => r.both(r.is(String), dir(folder).exists)
+    const exists = r.both(r.is(String), dir(folder).exists)
     const removeReduxConfigs = (hasRedux) =>
       r.pipe(
         r.test,
@@ -34,69 +45,44 @@ module.exports = {
         r.reject
       )(/src\/index/)
     const removeUneededTemplates = r.pipe(
-      exists,
-      r.propSatisfies(r.__, 'target'),
+      r.propSatisfies(exists),
       r.both(r.complement(r.has('opts'))),
       r.reject
+    )('target')
+    const removeUneededAttrs = r.ifElse(
+      r.propSatisfies(exists, 'target'),
+      r.pipe(r.dissoc('template'), r.dissoc('props')),
+      r.dissoc('opts')
     )
-    const removeUneededAttrs = (folder) =>
-      r.ifElse(
-        r.propSatisfies(exists(folder), 'target'),
-        r.pipe(r.dissoc('template'), r.dissoc('props')),
-        r.dissoc('opts')
-      )
     const commitMessage = (hasRedux) =>
       r.pipe(
         r.concat('-Adds action '),
         r.when(() => !hasRedux, r.concat('-Configs Redux\n'))
       )
-    const makeGitCommand = (folder) =>
-      r.concat(`git --git-dir ${folder}/.git --work-tree ${folder} `)
-    const mergeGitCommands = (folder) =>
-      r.reduce(
-        (acc, current) =>
-          acc
-            ? `${acc} && ${makeGitCommand(folder)(current)}`
-            : makeGitCommand(folder)(current),
-        ''
-      )
-    const gitCommit = (folder, commit) => () =>
-      r.pipe(
-        mergeGitCommands(folder),
-        run
-      )(['init', 'add .', `commit -m '${commit}'`])
+    const makeGitCommand = r.concat(
+      `git --git-dir ${folder}/.git --work-tree ${folder} `
+    )
+    const mergeGitCommands = r.reduce(
+      (acc, current) =>
+        acc ? `${acc} && ${makeGitCommand(current)}` : makeGitCommand(current),
+      ''
+    )
+    const gitCommit = (commit) => () =>
+      r.pipe(mergeGitCommands, run)(['init', 'add .', `commit -m '${commit}'`])
 
-    const buildMainFunction = (folder, { reducer, action }) => {
-      const type = `@${reducer}/${snakecase(action)}`
-      const hasRedux = exists(folder)('src/store')
+    const buildMainFunction = () => {
+      const hasRedux = exists('src/store')
       return r.pipe(
-        removeUneededTemplates(folder),
+        removeUneededTemplates(),
         removeReduxConfigs(hasRedux),
-        r.map(
-          r.pipe(
-            updateStrings(
-              folder,
-              isReactNative(folder),
-              reducer,
-              action,
-              type,
-              `${camelcase(action)}${pascalcase(reducer)}`
-            ),
-            removeUneededAttrs(folder),
-            removeReactotronConfigs,
-            writeFiles
-          )
-        ),
+        r.map(r.pipe(removeUneededAttrs, removeReactotronConfigs, writeFiles)),
         (opts) => Promise.all(opts),
         r.andThen(gitCommit(folder, commitMessage(hasRedux)(type)))
         // a => console.log(util.inspect(a, { depth: null }))
       )
     }
 
-    buildMainFunction(
-      getFolder(options),
-      await getModuleDetails({ reducer: first, action: second })
-    )([
+    buildMainFunction()([
       {
         template: 'reactotron.js.ejs',
         target: 'src/config/Reactotron.js',
@@ -105,28 +91,28 @@ module.exports = {
       {
         opts: [
           {
-            insert: `import reducerName from './reducerName/reducer'\n`,
+            insert: `import ${reducer} from './${reducer}/reducer'\n`,
             before: 'export default combineReducers({',
           },
           {
-            insert: `reducerName,`,
+            insert: `${reducer},`,
             after: 'export default combineReducers({',
           },
         ],
         template: 'redux/rootReducer.js.ejs',
-        props: { reducer: '' },
+        props: { reducer },
         target: 'src/store/modules/rootReducer.js',
       },
       {
         opts: [
           {
-            insert: `case 'typeName': return produce(state, draft => console.tron.log('typeName not implemented'))\n`,
+            insert: `case '${type}': return produce(state, draft => console.tron.log('${type} not implemented'))\n`,
             after: 'switch (action.type) {\n',
           },
         ],
         template: 'redux/reducer.js.ejs',
-        props: { reducer: '', type: '' },
-        target: 'src/store/modules/reducerName/reducer.js',
+        props: { reducer, type },
+        target: `src/store/modules/${reducer}/reducer.js`,
       },
       {
         template: 'redux/index.js',
@@ -135,13 +121,13 @@ module.exports = {
       {
         opts: [
           {
-            insert: `\n\nexport const actionNameToReducerName = () => ({type: 'typeName'})`,
+            insert: `\n\nexport const ${functionName} = () => ({type: '${type}'})`,
             before: /$(?![\r\n])/gm, // EOF
           },
         ],
         template: 'redux/action.js.ejs',
-        props: { functionName: '', type: '' },
-        target: 'src/store/modules/reducerName/actions.js',
+        props: { functionName, type },
+        target: `src/store/modules/${reducer}/actions.js`,
       },
       {
         opts: [
@@ -166,16 +152,16 @@ module.exports = {
             replace: '</>',
           },
         ],
-        target: 'src/index.js',
+        target: reactNative ? 'src/App.js' : 'src/index.js',
       },
       {
-        install: [
+        install: makeInstallCommand([
           'redux',
           'react-redux',
           'reactotron-react-js',
           'reactotron-redux',
           'immer',
-        ],
+        ]),
       },
     ])
   },
