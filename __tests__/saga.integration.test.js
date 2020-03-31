@@ -6,7 +6,7 @@ describe('saga command integration', () => {
   const projectPath = filesystem.path(src, project)
   const reducer = 'batata'
   const action = 'nervosa'
-  const functionName = 'nervosaToBatata'
+  const functionName = 'nervosaBatata'
   const type = '@batata/NERVOSA'
 
   const cli = async (cmd) =>
@@ -21,18 +21,19 @@ describe('saga command integration', () => {
 
   afterEach(async () => system.run(`rm -rf ${project}`))
 
-  it('should add request action on action.js file', () => {
+  it('should add request action on action.js file', async () => {
     const file = filesystem.path(
       projectPath,
       'src',
+      'store',
       'modules',
       reducer,
       'actions.js'
     )
-    const content = `\n\nexport const ${functionName}Request = () => ({type: '${type}_REQUEST'})`
-    const hasContent = patching.exists(file, content)
+    const content = filesystem.read(file)
+    const expectedContent = `export const ${functionName}Request = () => ({type: '${type}_REQUEST'})`
 
-    expect(hasContent).toBeTruthy()
+    expect(content).toContain(expectedContent)
   })
 
   it('should install redux-saga', () => {
