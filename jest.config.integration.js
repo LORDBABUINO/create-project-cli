@@ -78,7 +78,7 @@ module.exports = {
   // moduleNameMapper: {},
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  // modulePathIgnorePatterns: ['./src/store/'],
+  modulePathIgnorePatterns: ['./test-project/'],
 
   // Activates notifications for test results
   // notify: false,
@@ -161,8 +161,8 @@ module.exports = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    '.(js|jsx|ts|tsx)': '@sucrase/jest-plugin'
-  }
+    '.(js|jsx|ts|tsx)': '@sucrase/jest-plugin',
+  },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
