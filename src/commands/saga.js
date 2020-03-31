@@ -41,7 +41,7 @@ module.exports = {
           target: `src/store/modules/${reducer}/actions.js`,
           opts: [
             {
-              insert: `\nexport const ${functionName}Request = () => ({type: '${type}_REQUEST}')`,
+              insert: `\nexport const ${functionName}Request = () => ({type: '${type}_REQUEST'})`,
               before: /$(?![\r\n])/gm, // EOF
             },
           ],
