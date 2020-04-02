@@ -22,7 +22,7 @@ module.exports = {
       action: second,
     })
     const type = `@${reducer}/${snakecase(action)}`
-    const functionName = `${camelcase(action)}${pascalcase(reducer)}`
+    const functionName = `${camelcase(reducer)}${pascalcase(action)}`
     const folder = options.dir || '.'
     const reactNative = isReactNative(folder)
     const removeReactotronConfigs = r.when(

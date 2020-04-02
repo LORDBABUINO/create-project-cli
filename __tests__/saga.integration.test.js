@@ -6,7 +6,7 @@ describe('saga command integration', () => {
   const projectPath = filesystem.path(src, project)
   const reducer = 'batata'
   const action = 'nervosa'
-  const functionName = 'nervosaBatata'
+  const functionName = 'batataNervosa'
   const type = '@batata/NERVOSA'
 
   const cli = async (cmd) =>
@@ -31,9 +31,11 @@ describe('saga command integration', () => {
       'actions.js'
     )
     const content = filesystem.read(file)
-    const expectedContent = `export const ${functionName}Request = () => ({type: '${type}_REQUEST'})`
+    const expectedContent1 = `export const ${functionName}Request = () => ({ type: '${type}_REQUEST' })`
+    const expectedContent2 = `export const ${functionName}Success = () => ({ type: '${type}_SUCCESS' })`
 
-    expect(content).toContain(expectedContent)
+    expect(content).toContain(expectedContent1)
+    expect(content).toContain(expectedContent2)
   })
 
   it('should install redux-saga', () => {

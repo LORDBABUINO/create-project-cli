@@ -6,12 +6,12 @@ describe('redux command integration', () => {
   const projectPath = filesystem.path(src, project)
   const reducer = 'batata'
   const action = 'nervosa'
-  const functionName = 'nervosaBatata'
+  const functionName = 'batataNervosa'
   const type = '@batata/NERVOSA'
 
-  const cli = async cmd =>
+  const cli = async (cmd) =>
     system.run(`node ${filesystem.path(src, 'bin', 'omni')} ${cmd}`, {
-      cwd: projectPath
+      cwd: projectPath,
     })
 
   beforeEach(async () => {

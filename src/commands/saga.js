@@ -5,15 +5,15 @@ module.exports = {
   description: 'Adds saga to project',
   run: async ({
     parameters: { first, second, options },
-    utils: { camelcase, pascalcase, getModuleDetails },
+    utils: { camelcase, pascalcase, getModuleDetails, snakecase },
     builder: { writeFiles },
   }) => {
     const { reducer, action } = await getModuleDetails({
       reducer: first,
       action: second,
     })
-    const type = `@${reducer}/${action.toUpperCase()}`
-    const functionName = `${camelcase(action)}${pascalcase(reducer)}`
+    const type = `@${reducer}/${snakecase(action)}`
+    const functionName = `${camelcase(reducer)}${pascalcase(action)}`
     const buildMainFunction = r.pipe(
       r.map((y) => () => Promise.all(r.map(writeFiles)(y))),
       r.reduce((a, b) => a.then(b), Promise.resolve())
@@ -41,7 +41,7 @@ module.exports = {
           target: `src/store/modules/${reducer}/actions.js`,
           opts: [
             {
-              insert: `\nexport const ${functionName}Request = () => ({type: '${type}_REQUEST'})`,
+              insert: `\nexport const ${functionName}Request = () => ({ type: '${type}_REQUEST' })`,
               before: /$(?![\r\n])/gm, // EOF
             },
           ],
