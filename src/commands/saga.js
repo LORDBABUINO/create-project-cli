@@ -46,6 +46,10 @@ module.exports = {
             },
           ],
         },
+        {
+          target: `src/store/index.js`,
+          template: 'saga/index.js',
+        },
         { install: ['redux-saga', 'reactotron-redux-saga'] },
       ],
     ])

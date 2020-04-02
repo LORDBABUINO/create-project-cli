@@ -1,4 +1,4 @@
-import { system, filesystem, patching } from 'gluegun'
+import { system, filesystem } from 'gluegun'
 
 describe('saga command integration', () => {
   const src = filesystem.path(__dirname, '..')
@@ -51,4 +51,31 @@ describe('saga command integration', () => {
 
     expect(filesystem.exists(dir)).toBeTruthy()
   })
+
+  it('should configurate saga on index file', async () => {
+    const file = filesystem.path(projectPath, 'src', 'store', 'index.js')
+    const content = filesystem.read(file)
+    const expectedContent1 = `import createSagaMiddleware from 'redux-saga'`
+    const expectedContent2 = `import saga from './modules/rootSaga'`
+    const expectedContent3 = `applyMiddleware(sagaMiddleware)`
+    const expectedContent4 = `sagaMiddleware.run(saga)`
+    expect(content).toContain(expectedContent1)
+    expect(content).toContain(expectedContent2)
+    expect(content).toContain(expectedContent3)
+    expect(content).toContain(expectedContent4)
+  })
+
+  // it('should add new saga request if saga is already configurated', async () => {
+  //   const file = filesystem.path(
+  //     projectPath,
+  //     'src',
+  //     'modules',
+  //     reducer,
+  //     'actions.js'
+  //   )
+  //   const content = `\n\nexport const bananaToCanelaRequest = () => ({type: '@banana/CANELA_REQUEST'})`
+  //   await cli(`saga banana canela --dir ${projectPath}`)
+  //   const hasContent = patching.exists(file, content)
+  //   expect(hasContent).toBeTruthy()
+  // })
 })
