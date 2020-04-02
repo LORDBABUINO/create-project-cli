@@ -21,12 +21,12 @@ module.exports = {
     return buildMainFunction([
       [
         {
-          template: 'redux/sagas.js.ejs',
+          template: 'saga/sagas.js.ejs',
           target: `src/store/modules/${reducer}/sagas.js`,
           props: { type, functionName },
         },
         {
-          template: 'redux/rootSaga.js.ejs',
+          template: 'saga/rootSaga.js.ejs',
           target: 'src/store/modules/rootSaga.js',
           props: { reducer },
         },
