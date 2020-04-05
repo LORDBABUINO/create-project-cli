@@ -46,7 +46,7 @@ describe('builder extension', () => {
   it('writeFiles should run patch when receive { opts }', () => {
     const opts = { target: 'target', opts: ['opt1', 'opt2'] }
     toolbox.builder.writeFiles(opts)
-    expect(mockPatch).toHaveBeenCalledWith(opts.target, ...opts.opts)
+    expect(mockPatch).toHaveBeenCalledWith('./target', ...opts.opts)
   })
 
   it('writeFiles should run cli when receive { command }', () => {

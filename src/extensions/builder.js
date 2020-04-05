@@ -28,7 +28,10 @@ export default (toolbox) => {
         }),
     ],
     [r.has('install'), ({ install }) => installFiles(install)],
-    [r.has('opts'), ({ opts, target }) => patch(target, ...opts)],
+    [
+      r.has('opts'),
+      ({ opts, target }) => patch(`${folder}/${target}`, ...opts),
+    ],
     [r.has('command'), ({ command }) => cli(command)],
     [r.T, async () => {}],
   ])
