@@ -54,4 +54,9 @@ describe('builder extension', () => {
     toolbox.builder.writeFiles(command)
     expect(cli).toHaveBeenCalledWith(command.command)
   })
+
+  it('writeFiles should return a promise when receive {}', () => {
+    const result = toolbox.builder.writeFiles({})
+    expect(result instanceof Promise).toBeTruthy()
+  })
 })
