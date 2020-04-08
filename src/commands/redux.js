@@ -88,11 +88,11 @@ module.exports = {
         opts: [
           {
             insert: `import ${reducer} from './${reducer}/reducer'\n`,
-            before: 'export default combineReducers({',
+            before: '\nexport default combineReducers({',
           },
           {
-            insert: `${reducer},`,
-            after: 'export default combineReducers({',
+            insert: `${reducer},\n`,
+            after: /export default combineReducers\({[^}]+/,
           },
         ],
         template: 'redux/rootReducer.js.ejs',

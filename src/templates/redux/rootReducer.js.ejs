@@ -1,3 +1,7 @@
 import { combineReducers } from 'redux'
 
-export default combineReducers({ <%= props.reducer %> })
+import <%= props.reducer %> from './<%= props.reducer %>/reducer'
+
+export default combineReducers({
+  <%= props.reducer %>,
+})

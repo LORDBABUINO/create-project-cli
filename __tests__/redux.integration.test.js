@@ -35,4 +35,31 @@ describe('redux command integration', () => {
 
     expect(content).toMatch(expected)
   })
+
+  it('should add new reducer on rootRedux file if redux is already configurated', async () => {
+    const reducer2 = 'banana'
+    const file = filesystem.path(
+      projectPath,
+      'src',
+      'store',
+      'modules',
+      'rootReducer.js'
+    )
+    await cli(`redux ${reducer2} canela --dir ${projectPath}`)
+    const expectedContent1 = expect.stringMatching(
+      new RegExp(`import ${reducer} from './${reducer}/reducer'`)
+    )
+    const expectedContent2 = expect.stringMatching(
+      new RegExp(`import ${reducer2} from './${reducer2}/reducer'`)
+    )
+    const expectedContent3 = expect.stringMatching(
+      new RegExp(
+        `export default combineReducers\\(\\{\\s+(${reducer},\\s+${reducer2}|${reducer2},\\s+${reducer}),?\\s+\\}\\)`
+      )
+    )
+    const content = filesystem.read(file)
+    expect(content).toEqual(expectedContent1)
+    expect(content).toEqual(expectedContent2)
+    expect(content).toEqual(expectedContent3)
+  })
 })
