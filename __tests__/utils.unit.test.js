@@ -4,16 +4,19 @@ import { prompt } from 'inquirer'
 import utils from '../src/extensions/utils'
 
 describe('utils', () => {
-  const toolbox = {}
+  const toolbox = {
+    filesystem: { dir: () => () => {} },
+    parameters: { options: {} },
+  }
   beforeAll(async () => {
-    prompt.mockImplementation(async obj =>
+    prompt.mockImplementation(async (obj) =>
       Object.keys(obj).length < 2
         ? {
-            reducer: 'batata'
+            reducer: 'batata',
           }
         : {
             reducer: 'batata',
-            action: 'nervosa'
+            action: 'nervosa',
           }
     )
     utils(toolbox)
@@ -43,7 +46,7 @@ describe('utils', () => {
     return expect(
       toolbox.utils.getModuleDetails({ 1: 'batata' })
     ).resolves.toMatchObject({
-      1: 'batata'
+      1: 'batata',
     })
   })
 
@@ -51,7 +54,7 @@ describe('utils', () => {
     await expect(
       toolbox.utils.getModuleDetails({ reducer: false })
     ).resolves.toMatchObject({
-      reducer: 'batata'
+      reducer: 'batata',
     })
     expect(prompt).toHaveBeenCalled()
   })
@@ -60,18 +63,34 @@ describe('utils', () => {
     await expect(
       toolbox.utils.getModuleDetails({
         reducer: false,
-        action: undefined
+        action: undefined,
       })
     ).resolves.toMatchObject({
       reducer: 'batata',
-      action: 'nervosa'
+      action: 'nervosa',
     })
     expect(prompt).toHaveBeenCalled()
   })
 
   it('isReactNative should return false when there is no package.json', async () => {
-    const toolboxFileSystem = { filesystem: { read: () => undefined } }
+    const toolboxFileSystem = {
+      filesystem: { read: () => undefined, dir: () => () => {} },
+      parameters: { options: {} },
+    }
     utils(toolboxFileSystem)
     expect(toolboxFileSystem.utils.isReactNative()).toBeFalsy()
+  })
+
+  it('exists should return false when filesystem.dir().exists() return false', async () => {
+    const toolboxFileSystem = {
+      filesystem: {
+        dir: () => ({
+          exists: () => false,
+        }),
+      },
+      parameters: { options: {} },
+    }
+    utils(toolboxFileSystem)
+    expect(toolboxFileSystem.utils.exists('batata')).toBeFalsy()
   })
 })

@@ -5,10 +5,10 @@ module.exports = {
   name: 'redux',
   description: 'Add redux to current project',
   run: async ({
-    filesystem: { dir },
     parameters: { first, second, options },
     system: { run },
     utils: {
+      exists,
       camelcase,
       snakecase,
       pascalcase,
@@ -31,7 +31,6 @@ module.exports = {
         opts: r.reject(r.propEq('insert', "import './config/Reactotron'\n")),
       })
     )
-    const exists = r.both(r.is(String), dir(folder).exists)
     const removeReduxConfigs = (hasRedux) =>
       r.pipe(
         r.test,
