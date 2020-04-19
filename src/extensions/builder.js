@@ -7,6 +7,7 @@ export default (toolbox) => {
     patching: { patch },
     system: { run },
     parameters: { options },
+    filesystem: { dir },
   } = toolbox
 
   const folder = options.dir || '.'
@@ -16,6 +17,12 @@ export default (toolbox) => {
       `yarn init -y --cwd ${folder} && yarn --cwd ${folder} add`
     ),
     run
+  )
+  const exists = r.both(r.is(String), dir(options.dir || '.').exists)
+  const removeUneededAttrs = r.ifElse(
+    r.both(r.propSatisfies(exists, 'target'), r.propOr(true, 'keep')),
+    r.pipe(r.dissoc('template'), r.dissoc('props')),
+    r.dissoc('opts')
   )
 
   const writeFiles = r.cond([
@@ -38,5 +45,7 @@ export default (toolbox) => {
 
   toolbox.builder = {
     writeFiles,
+    removeUneededAttrs,
+    exists,
   }
 }

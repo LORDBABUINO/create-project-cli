@@ -12,6 +12,7 @@ describe('builder extension', () => {
     patching: { patch: mockPatch },
     system: { run: mockRun },
     parameters: { options: { dir: '.' } },
+    filesystem: { dir: () => ({ exists: () => false }) },
   }
 
   beforeAll(() => {
@@ -58,5 +59,10 @@ describe('builder extension', () => {
   it('writeFiles should return a promise when receive {}', () => {
     const result = toolbox.builder.writeFiles({})
     expect(result instanceof Promise).toBeTruthy()
+  })
+
+  it('exists should return false when filesystem.dir().exists() return false', async () => {
+    builder(toolbox)
+    expect(toolbox.builder.exists('batata')).toBeFalsy()
   })
 })

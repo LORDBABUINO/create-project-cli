@@ -8,14 +8,13 @@ module.exports = {
     parameters: { first, second, options },
     system: { run },
     utils: {
-      exists,
       camelcase,
       snakecase,
       pascalcase,
       getModuleDetails,
       isReactNative,
     },
-    builder: { writeFiles },
+    builder: { writeFiles, removeUneededAttrs, exists },
   }) => {
     const { reducer, action } = await getModuleDetails({
       reducer: first,
@@ -44,11 +43,6 @@ module.exports = {
       r.both(r.complement(r.has('opts'))),
       r.reject
     )('target')
-    const removeUneededAttrs = r.ifElse(
-      r.propSatisfies(exists, 'target'),
-      r.pipe(r.dissoc('template'), r.dissoc('props')),
-      r.dissoc('opts')
-    )
     const commitMessage = (hasRedux) =>
       r.pipe(
         r.concat('-Adds action '),
@@ -65,9 +59,8 @@ module.exports = {
     const gitCommit = (commit) => () =>
       r.pipe(mergeGitCommands, run)(['init', 'add .', `commit -m '${commit}'`])
 
-    const buildMainFunction = () => {
-      const hasRedux = exists('src/store')
-      return r.pipe(
+    const buildMainFunction = (hasRedux) =>
+      r.pipe(
         removeUneededTemplates(),
         removeReduxConfigs(hasRedux),
         r.map(r.pipe(removeUneededAttrs, removeReactotronConfigs, writeFiles)),
@@ -75,9 +68,8 @@ module.exports = {
         r.andThen(gitCommit(folder, commitMessage(hasRedux)(type)))
         // a => console.log(util.inspect(a, { depth: null }))
       )
-    }
 
-    buildMainFunction()([
+    buildMainFunction(exists('src/store'))([
       {
         template: 'reactotron.js.ejs',
         target: 'src/config/Reactotron.js',

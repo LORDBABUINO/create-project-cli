@@ -5,7 +5,6 @@ import utils from '../src/extensions/utils'
 
 describe('utils', () => {
   const toolbox = {
-    filesystem: { dir: () => () => {} },
     parameters: { options: {} },
   }
   beforeAll(async () => {
@@ -79,18 +78,5 @@ describe('utils', () => {
     }
     utils(toolboxFileSystem)
     expect(toolboxFileSystem.utils.isReactNative()).toBeFalsy()
-  })
-
-  it('exists should return false when filesystem.dir().exists() return false', async () => {
-    const toolboxFileSystem = {
-      filesystem: {
-        dir: () => ({
-          exists: () => false,
-        }),
-      },
-      parameters: { options: {} },
-    }
-    utils(toolboxFileSystem)
-    expect(toolboxFileSystem.utils.exists('batata')).toBeFalsy()
   })
 })

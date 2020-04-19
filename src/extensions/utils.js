@@ -2,14 +2,10 @@ import r from 'ramda'
 import { prompt } from 'inquirer'
 
 export default (toolbox) => {
-  const {
-    filesystem,
-    parameters: { options },
-  } = toolbox
+  const { filesystem } = toolbox
   const camelcase = r.replace(/-\w/g, r.pipe(r.last, r.toUpper))
   const pascalcase = r.pipe(r.replace(/^\w/, r.toUpper), camelcase)
   const snakecase = r.pipe(r.replace('-', '_'), r.toUpper)
-  const exists = r.both(r.is(String), filesystem.dir(options.dir || '.').exists)
   const makeQuestion = (name) => ({
     type: 'input',
     name,
@@ -33,7 +29,6 @@ export default (toolbox) => {
   }
 
   toolbox.utils = {
-    exists,
     camelcase,
     pascalcase,
     snakecase,
