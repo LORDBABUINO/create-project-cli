@@ -3,5 +3,7 @@ import { all } from 'redux-saga/effects'
 import <%= props.reducer %> from './<%= props.reducer %>/sagas'
 
 export default function* rootSaga() {
-  return yield all([<%= props.reducer %>])
+  return yield all([
+    <%= props.reducer %>
+  ])
 }

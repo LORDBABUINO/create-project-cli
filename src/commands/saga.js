@@ -6,7 +6,7 @@ module.exports = {
   run: async ({
     parameters: { first, second, options },
     utils: { camelcase, pascalcase, getModuleDetails, snakecase },
-    builder: { writeFiles },
+    builder: { writeFiles, removeUneededAttrs },
   }) => {
     const { reducer, action } = await getModuleDetails({
       reducer: first,
@@ -15,7 +15,9 @@ module.exports = {
     const type = `@${reducer}/${snakecase(action)}`
     const functionName = `${camelcase(reducer)}${pascalcase(action)}`
     const buildMainFunction = r.pipe(
-      r.map((y) => () => Promise.all(r.map(writeFiles)(y))),
+      r.map((y) => () =>
+        Promise.all(r.map(r.pipe(removeUneededAttrs, writeFiles))(y))
+      ),
       r.reduce((a, b) => a.then(b), Promise.resolve())
     )
     return buildMainFunction([
@@ -26,6 +28,16 @@ module.exports = {
           props: { type, functionName },
         },
         {
+          opts: [
+            {
+              insert: `import ${reducer} from './${reducer}/sagas'\n`,
+              before: /\nexport/,
+            },
+            {
+              insert: `,\n    ${reducer}`,
+              before: /\s+\]\)/,
+            },
+          ],
           template: 'saga/rootSaga.js.ejs',
           target: 'src/store/modules/rootSaga.js',
           props: { reducer },
@@ -49,6 +61,7 @@ module.exports = {
         {
           target: `src/store/index.js`,
           template: 'saga/index.js',
+          keep: false,
         },
         { install: ['redux-saga', 'reactotron-redux-saga'] },
       ],

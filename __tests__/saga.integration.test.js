@@ -67,17 +67,30 @@ describe('saga command integration', () => {
     expect(content).toContain(expectedContent4)
   })
 
-  // it('should add new saga request if saga is already configurated', async () => {
-  //   const file = filesystem.path(
-  //     projectPath,
-  //     'src',
-  //     'modules',
-  //     reducer,
-  //     'actions.js'
-  //   )
-  //   const content = `\n\nexport const bananaToCanelaRequest = () => ({type: '@banana/CANELA_REQUEST'})`
-  //   await cli(`saga banana canela --dir ${projectPath}`)
-  //   const hasContent = patching.exists(file, content)
-  //   expect(hasContent).toBeTruthy()
-  // })
+  it('should add new saga reducer on rootSaga file if saga is already configurated', async () => {
+    const reducer2 = 'banana'
+    const file = filesystem.path(
+      projectPath,
+      'src',
+      'store',
+      'modules',
+      'rootSaga.js'
+    )
+    await cli(`saga ${reducer2} canela --dir ${projectPath}`)
+    const expectedContent1 = expect.stringMatching(
+      new RegExp(`import ${reducer} from './${reducer}/sagas'`)
+    )
+    const expectedContent2 = expect.stringMatching(
+      new RegExp(`import ${reducer2} from './${reducer2}/sagas'`)
+    )
+    const expectedContent3 = expect.stringMatching(
+      new RegExp(
+        `return yield all\\(\\[((\\s*${reducer}),(\\s*${reducer2})|\\2,\\1)\\s*\\]\\)`
+      )
+    )
+    const content = filesystem.read(file)
+    expect(content).toEqual(expectedContent1)
+    expect(content).toEqual(expectedContent2)
+    expect(content).toEqual(expectedContent3)
+  })
 })
