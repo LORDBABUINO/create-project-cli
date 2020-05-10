@@ -18,7 +18,7 @@ export default (toolbox) => {
     ),
     run
   )
-  const exists = r.both(r.is(String), dir(options.dir || '.').exists)
+  const exists = r.both(r.is(String), dir(folder).exists)
   const removeUneededAttrs = r.ifElse(
     r.both(r.propSatisfies(exists, 'target'), r.propOr(true, 'keep')),
     r.pipe(r.dissoc('template'), r.dissoc('props')),

@@ -85,12 +85,54 @@ describe('saga command integration', () => {
     )
     const expectedContent3 = expect.stringMatching(
       new RegExp(
-        `return yield all\\(\\[((\\s*${reducer}),(\\s*${reducer2})|\\2,\\1)\\s*\\]\\)`
+        `return yield all\\(\\[(\\s*(${reducer}),\\s*(${reducer2})|\\s*\\2,\\s*\\1)\\s*\\]\\)`
       )
     )
     const content = filesystem.read(file)
     expect(content).toEqual(expectedContent1)
     expect(content).toEqual(expectedContent2)
     expect(content).toEqual(expectedContent3)
+  })
+
+  it('should add new saga action on sagas file if saga is already configurated', async () => {
+    const action2 = 'calma'
+    const functionName2 = 'batataCalma'
+    const type2 = '@batata\\/CALMA'
+    const type3 = '@batata\\/NERVOSA'
+    const file = filesystem.path(
+      projectPath,
+      'src',
+      'store',
+      'modules',
+      reducer,
+      'sagas.js'
+    )
+    await cli(`saga ${reducer} ${action2} --dir ${projectPath}`)
+    const expectedContent1 = expect.stringMatching(
+      new RegExp(
+        `import \\{\\s*${functionName}Success,\\s*${functionName2}Success\\s*\\} from './actions'`
+      )
+    )
+    const expectedContent2 = expect.stringMatching(
+      new RegExp(
+        `function\\* ${functionName}\\(\\)\\s\\{\\s*yield put\\(${functionName}Success\\(\\)\\)\\s*\\}`
+      )
+    )
+    const expectedContent3 = expect.stringMatching(
+      new RegExp(
+        `function\\* ${functionName2}\\(\\)\\s\\{\\s*yield put\\(${functionName2}Success\\(\\)\\)\\s*\\}`
+      )
+    )
+    const expectedContent4 = expect.stringMatching(
+      new RegExp(
+        // `export default all\\(\\[\\s*takeEvery\\('${type3}',\\s*${functionName}\\),\\s*takeEvery\\('${type2}',\\s*${functionName2}\\)\\s*\\]\\)`
+        `export default all\\(\\[\\s*takeEvery\\('${type3}',\\s*${functionName}\\),\\s*takeEvery\\('${type2}',\\s*${functionName2}\\),?\\s*\\]\\)`
+      )
+    )
+    const content = filesystem.read(file)
+    expect(content).toEqual(expectedContent1)
+    expect(content).toEqual(expectedContent2)
+    expect(content).toEqual(expectedContent3)
+    expect(content).toEqual(expectedContent4)
   })
 })
