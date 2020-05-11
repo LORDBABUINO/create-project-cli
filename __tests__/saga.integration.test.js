@@ -125,7 +125,6 @@ describe('saga command integration', () => {
     )
     const expectedContent4 = expect.stringMatching(
       new RegExp(
-        // `export default all\\(\\[\\s*takeEvery\\('${type3}',\\s*${functionName}\\),\\s*takeEvery\\('${type2}',\\s*${functionName2}\\)\\s*\\]\\)`
         `export default all\\(\\[\\s*takeEvery\\('${type3}',\\s*${functionName}\\),\\s*takeEvery\\('${type2}',\\s*${functionName2}\\),?\\s*\\]\\)`
       )
     )

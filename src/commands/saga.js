@@ -23,6 +23,23 @@ module.exports = {
     return buildMainFunction([
       [
         {
+          opts: [
+            {
+              insert: `, ${functionName}Success`,
+              before: /\s\} from '\.\/actions'/,
+            },
+            {
+              insert:
+                `\nfunction* ${functionName}() {\n` +
+                `  yield put(${functionName}Success())\n` +
+                `}\n`,
+              before: /\sexport/,
+            },
+            {
+              insert: `  takeEvery('${type}', ${functionName}),\n`,
+              after: /export[^\]]+/,
+            },
+          ],
           template: 'saga/sagas.js.ejs',
           target: `src/store/modules/${reducer}/sagas.js`,
           props: { type, functionName },
