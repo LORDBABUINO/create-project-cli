@@ -15,17 +15,13 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 2020,
   },
-  plugins: [
-    'react',
-    'prettier',
-    'jest',
-  ],
+  plugins: ['react', 'prettier', 'jest'],
   rules: {
     'prettier/prettier': 'error',
-    'no-param-reassign': ['error', {'props': false}],
+    'no-param-reassign': ['error', { props: false }],
     semi: ['error', 'never'],
-    'no-underscore-dangle': "off"
+    'no-underscore-dangle': 'off',
   },
-};
+}
