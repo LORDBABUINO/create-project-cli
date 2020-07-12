@@ -36,7 +36,7 @@ describe('builder extension', () => {
     })
   })
 
-  it('writeFiles should run "run" when receive { install }', () => {
+  it('writeFiles should run "run" with yarn command when receive { install }', () => {
     const install = { install: ['angular', 'vue', 'react'] }
     toolbox.builder.writeFiles(install)
     expect(mockRun).toHaveBeenCalledWith(
@@ -64,5 +64,14 @@ describe('builder extension', () => {
   it('exists should return false when filesystem.dir().exists() return false', async () => {
     builder(toolbox)
     expect(toolbox.builder.exists('batata')).toBeFalsy()
+  })
+
+  it('gitCommit should run "run" with commit git init, add and commit commands', () => {
+    toolbox.builder.gitCommit('test', ['test-file.js'])
+    expect(mockRun).toHaveBeenCalledWith(
+      'git --git-dir ./.git --work-tree . init && ' +
+        'git --git-dir ./.git --work-tree . add ./test-file.js && ' +
+        'git --git-dir ./.git --work-tree . commit -m "test"'
+    )
   })
 })

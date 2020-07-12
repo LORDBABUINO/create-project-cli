@@ -6,7 +6,6 @@ module.exports = {
   description: 'Add redux to current project',
   run: async ({
     parameters: { first, second, options },
-    system: { run },
     utils: {
       camelcase,
       snakecase,
@@ -14,7 +13,7 @@ module.exports = {
       getModuleDetails,
       isReactNative,
     },
-    builder: { writeFiles, removeUneededAttrs, exists },
+    builder: { writeFiles, removeUneededAttrs, exists, gitCommit },
   }) => {
     const { reducer, action } = await getModuleDetails({
       reducer: first,
@@ -43,33 +42,36 @@ module.exports = {
       r.both(r.complement(r.has('opts'))),
       r.reject
     )('target')
-    const commitMessage = (hasRedux) =>
-      r.pipe(
-        r.concat('-Adds action '),
-        r.when(() => !hasRedux, r.concat('-Configs Redux\n'))
-      )
-    const makeGitCommand = r.concat(
-      `git --git-dir ${folder}/.git --work-tree ${folder} `
-    )
-    const mergeGitCommands = r.reduce(
-      (acc, current) =>
-        acc ? `${acc} && ${makeGitCommand(current)}` : makeGitCommand(current),
-      ''
-    )
-    const gitCommit = (commit) => () =>
-      r.pipe(mergeGitCommands, run)(['init', 'add .', `commit -m '${commit}'`])
 
     const buildMainFunction = (hasRedux) =>
-      r.pipe(
-        removeUneededTemplates(),
-        removeReduxConfigs(hasRedux),
-        r.map(r.pipe(removeUneededAttrs, removeReactotronConfigs, writeFiles)),
-        (opts) => Promise.all(opts),
-        r.andThen(gitCommit(folder, commitMessage(hasRedux)(type)))
-        // a => console.log(util.inspect(a, { depth: null }))
-      )
+      r.converge((a, b, c) => a.then(b).then(c), [
+        () =>
+          exists('src/index.js')
+            ? Promise.resolve()
+            : writeFiles({ command: `react ${folder}` }),
+        r.thunkify(
+          r.pipe(
+            removeUneededTemplates(),
+            removeReduxConfigs(hasRedux),
+            r.map(
+              r.pipe(removeUneededAttrs, removeReactotronConfigs, writeFiles)
+            ),
+            (opts) => Promise.all(opts)
+            // a => console.log(util.inspect(a, { depth: null }))
+          )
+        ),
+        r.thunkify(
+          r.pipe(
+            r.filter(r.has('target')),
+            r.map(r.prop('target')),
+            gitCommit(
+              `Adds redux action '${action}' to redux reducer '${reducer}'`
+            )
+          )
+        ),
+      ])
 
-    buildMainFunction(exists('src/store'))([
+    return buildMainFunction(exists('src/store'))([
       {
         template: 'reactotron.js.ejs',
         target: 'src/config/Reactotron.js',

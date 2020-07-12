@@ -134,4 +134,13 @@ describe('saga command integration', () => {
     expect(content).toEqual(expectedContent3)
     expect(content).toEqual(expectedContent4)
   })
+
+  it('should use git to commit changes', async () => {
+    const file = filesystem.path(projectPath, '.git', 'logs', 'HEAD')
+    const expectedContent1 = expect.stringMatching(
+      new RegExp(`Adds saga action '${action}' to saga reducer '${reducer}'`)
+    )
+    const content = filesystem.read(file)
+    expect(content).toEqual(expectedContent1)
+  })
 })

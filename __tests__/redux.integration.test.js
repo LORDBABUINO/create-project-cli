@@ -16,7 +16,7 @@ describe('redux command integration', () => {
 
   beforeEach(async () => {
     if (!filesystem.exists(projectPath)) await system.run(`mkdir ${project}`)
-    return cli(`redux ${reducer} ${action}`)
+    return cli(`redux ${reducer} ${action} --dir ${projectPath}`)
   })
 
   afterEach(async () => system.run(`rm -rf ${project}`))
@@ -61,5 +61,14 @@ describe('redux command integration', () => {
     expect(content).toEqual(expectedContent1)
     expect(content).toEqual(expectedContent2)
     expect(content).toEqual(expectedContent3)
+  })
+
+  it('should use git to commit changes', async () => {
+    const file = filesystem.path(projectPath, '.git', 'logs', 'HEAD')
+    const expectedContent1 = expect.stringMatching(
+      new RegExp(`Adds redux action '${action}' to redux reducer '${reducer}'`)
+    )
+    const content = filesystem.read(file)
+    expect(content).toEqual(expectedContent1)
   })
 })

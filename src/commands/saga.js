@@ -6,7 +6,7 @@ module.exports = {
   run: async ({
     parameters: { first, second, options },
     utils: { camelcase, pascalcase, getModuleDetails, snakecase },
-    builder: { writeFiles, removeUneededAttrs },
+    builder: { writeFiles, removeUneededAttrs, gitCommit },
   }) => {
     const { reducer, action } = await getModuleDetails({
       reducer: first,
@@ -14,10 +14,25 @@ module.exports = {
     })
     const type = `@${reducer}/${snakecase(action)}`
     const functionName = `${camelcase(reducer)}${pascalcase(action)}`
+
     const buildMainFunction = r.pipe(
-      r.map((y) => () =>
-        Promise.all(r.map(r.pipe(removeUneededAttrs, writeFiles))(y))
-      ),
+      r.converge(r.append, [
+        r.thunkify(
+          r.pipe(
+            r.flatten,
+            r.reduce(
+              (acc, { target }) => [...acc, ...(target ? [target] : [])],
+              []
+            ),
+            gitCommit(
+              `Adds saga action '${action}' to saga reducer '${reducer}'`
+            )
+          )
+        ),
+        r.map((x) => () =>
+          Promise.all(r.map(r.pipe(removeUneededAttrs, writeFiles), x))
+        ),
+      ]),
       r.reduce((a, b) => a.then(b), Promise.resolve())
     )
     return buildMainFunction([
@@ -32,7 +47,7 @@ module.exports = {
               insert:
                 `\nfunction* ${functionName}() {\n` +
                 `  yield put(${functionName}Success())\n` +
-                `}\n`,
+                '}\n',
               before: /\sexport/,
             },
             {
@@ -61,7 +76,7 @@ module.exports = {
         },
         {
           command: `redux ${reducer} ${action}-success --dir ${
-            options.dir || '.'
+            options.dir ?? '.'
           }`,
         },
       ],
@@ -76,7 +91,7 @@ module.exports = {
           ],
         },
         {
-          target: `src/store/index.js`,
+          target: 'src/store/index.js',
           template: 'saga/index.js',
           keep: false,
         },
