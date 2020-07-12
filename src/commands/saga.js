@@ -2,7 +2,7 @@ module.exports = {
   name: 'saga',
   description: 'Adds saga to project',
   run: async ({
-    parameters: { first, second, options },
+    parameters: { first, second },
     utils: { camelcase, pascalcase, getModuleDetails, snakecase },
     builder: { buildMainFunction },
   }) => {
@@ -55,9 +55,7 @@ module.exports = {
             props: { reducer },
           },
           {
-            command: `redux ${reducer} ${action}-success --dir ${
-              options.dir ?? '.'
-            }`,
+            command: `redux ${reducer} ${action}-success`,
           },
         ],
         [

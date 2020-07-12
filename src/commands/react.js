@@ -3,13 +3,13 @@ module.exports = {
   description: 'Create new React project',
   run: async (toolbox) => {
     const {
-      parameters,
+      parameters: { options },
       template,
       generate: { component },
       system: { run },
     } = toolbox
 
-    const name = parameters.first ? parameters.first : '.'
+    const name = options.dir ?? '.'
 
     const installDependencies = async () => {
       await template.generate({

@@ -57,7 +57,7 @@ export default (toolbox) => {
       r.has('opts'),
       ({ opts, target }) => patch(`${folder}/${target}`, ...opts),
     ],
-    [r.has('command'), ({ command }) => cli(command)],
+    [r.has('command'), ({ command }) => cli(`${command} --dir ${folder}`)],
     [r.T, async () => {}],
   ])
 
