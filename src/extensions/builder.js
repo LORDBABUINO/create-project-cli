@@ -61,10 +61,32 @@ export default (toolbox) => {
     [r.T, async () => {}],
   ])
 
+  const buildMainFunction = r.curry((commit, configs) =>
+    r.pipe(
+      r.converge(r.append, [
+        r.thunkify(
+          r.pipe(
+            r.flatten,
+            r.reduce(
+              (acc, { target }) => [...acc, ...(target ? [target] : [])],
+              []
+            ),
+            gitCommit(commit)
+          )
+        ),
+        r.map((x) => () =>
+          Promise.all(r.map(r.pipe(removeUneededAttrs, writeFiles), x))
+        ),
+      ]),
+      r.reduce((a, b) => a.then(b), Promise.resolve())
+    )(configs)
+  )
+
   toolbox.builder = {
     writeFiles,
     removeUneededAttrs,
     exists,
     gitCommit,
+    buildMainFunction,
   }
 }
