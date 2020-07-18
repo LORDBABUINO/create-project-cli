@@ -45,18 +45,13 @@ module.exports = {
                 insert: `import ${reducer} from './${reducer}/sagas'\n`,
                 before: /\nexport/,
               },
-              {
-                insert: `,\n    ${reducer}`,
-                before: /\s+\]\)/,
-              },
+              { insert: `,\n    ${reducer}`, before: /\s+\]\)/ },
             ],
             template: 'saga/rootSaga.js.ejs',
             target: 'src/store/modules/rootSaga.js',
             props: { reducer },
           },
-          {
-            command: `redux ${reducer} ${action}-success`,
-          },
+          { command: `redux ${reducer} ${action}-success` },
         ],
         [
           {
@@ -73,7 +68,7 @@ module.exports = {
             template: 'saga/index.js',
             keep: false,
           },
-          { install: ['redux-saga', 'reactotron-redux-saga'] },
+          { install: { packages: ['redux-saga', 'reactotron-redux-saga'] } },
         ],
       ]
     )

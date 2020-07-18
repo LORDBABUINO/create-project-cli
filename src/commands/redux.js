@@ -56,10 +56,7 @@ module.exports = {
             props: { reducer, type },
             target: `src/store/modules/${reducer}/reducer.js`,
           },
-          {
-            template: 'redux/index.js',
-            target: 'src/store/index.js',
-          },
+          { template: 'redux/index.js', target: 'src/store/index.js' },
           {
             opts: [
               {
@@ -71,9 +68,7 @@ module.exports = {
             props: { functionName, type },
             target: `src/store/modules/${reducer}/actions.js`,
           },
-          {
-            command: 'react',
-          },
+          { command: 'react' },
         ],
         [
           {
@@ -90,25 +85,21 @@ module.exports = {
                 insert: "import store from './store'\n",
                 after: "import './config/Reactotron'\n",
               },
-              {
-                insert: '<Provider store={store}>',
-                replace: '<>',
-              },
-              {
-                insert: '</Provider>',
-                replace: '</>',
-              },
+              { insert: '<Provider store={store}>', replace: '<>' },
+              { insert: '</Provider>', replace: '</>' },
             ],
             target: reactNative ? 'src/App.js' : 'src/index.js',
           },
           {
-            install: [
-              'redux',
-              'react-redux',
-              'reactotron-react-js',
-              'reactotron-redux',
-              'immer',
-            ],
+            install: {
+              packages: [
+                'redux',
+                'react-redux',
+                'reactotron-react-js',
+                'reactotron-redux',
+                'immer',
+              ],
+            },
           },
         ],
       ]

@@ -12,9 +12,15 @@ export default (toolbox) => {
 
   const folder = options.dir || '.'
   const installFiles = r.pipe(
-    r.reduce(
-      (a, b) => `${a} ${b}`,
-      `yarn init -ys --cwd ${folder} && yarn --cwd ${folder} -s add`
+    r.converge(
+      r.reduce((a, b) => `${a} ${b}`),
+      [
+        (obj) =>
+          `yarn init -ys --cwd ${folder} && yarn --cwd ${folder} -s${
+            r.propOr(false, 'dev', obj) ? 'D' : ''
+          } add`,
+        r.prop('packages'),
+      ]
     ),
     run
   )
@@ -39,6 +45,7 @@ export default (toolbox) => {
   const gitCommit = r.curry((commit, files) =>
     r.pipe(
       joinGitCommands,
+      r.concat(r.__, ' || true'),
       run
     )(['init', `add ${joinFiles(files)}`, `commit -m "${commit}"`])
   )

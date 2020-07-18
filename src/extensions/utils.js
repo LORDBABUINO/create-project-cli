@@ -23,10 +23,11 @@ export default (toolbox) => {
     r.andThen(r.mergeRight(obj), makeQuestions(obj))
   // const getModuleDetails = r.converge(r.then, [r.mergeRight, makeQuestions])
 
-  const isReactNative = (root) => {
-    const packageJson = filesystem.read(`${root || '.'}/package.json`, 'json')
-    return packageJson && !!packageJson.dependencies['react-native']
-  }
+  const isReactNative = r.pipe(
+    (root) => filesystem.read(`${root ?? '.'}/package.json`, 'json'),
+    r.prop('dependencies'),
+    r.has('react-native')
+  )
 
   toolbox.utils = {
     camelcase,
